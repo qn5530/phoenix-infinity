@@ -2,7 +2,9 @@
 
 **A calculator shooter that evolves** — from a faithful 1‑bit, 96×64 recreation of the classic TI‑83/84 shoot‑'em‑up *Phoenix* to a full‑blown, DoDonPachi‑inspired Japanese bullet hell. The whole game lives on the screen of a calculator, and the calculator itself evolves with it.
 
-**▶ Play in your browser:** open `index.html` (or the GitHub Pages link in the repo description). Works on desktop and in portrait on phones.
+**▶ Play in your browser:** https://qn5530.github.io/phoenix-infinity/ — works on desktop and in portrait on phones (or open `index.html` locally).
+
+**🎬 Trailer:** [phoenix_trailer.mp4](https://github.com/qn5530/phoenix-infinity/releases/download/v1.0/phoenix_trailer.mp4) (9:16, 60 fps, real gameplay)
 
 ## The four eras
 
