@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>PHOENIX ∞</title>
+<style>
+:root { --h: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #0c0d0a; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+#stage { position: fixed; inset: 0; overflow: hidden; }
+#bg { position: absolute; inset: 0; }
+#fade { position: absolute; left: 0; right: 0; bottom: 0; height: 16vh; pointer-events: none; }
+
+/* ---------- calculator body ---------- */
+#calc { position: absolute; left: 50%; top: 1.5vh; width: 560px; padding: 20px 30px 60px; border-radius: 40px 40px 70px 70px / 40px 40px 140px 140px; transform-origin: 50% 0; }
+.top { display: flex; justify-content: space-between; align-items: baseline; height: 34px; padding: 0 8px; }
+.brand { font: 900 24px/1 "Arial Black", "Helvetica Neue", sans-serif; letter-spacing: .5px; }
+.model { font: italic 700 13px/1 "Helvetica Neue", Arial, sans-serif; letter-spacing: 1px; }
+.bezel { padding: 22px 22px 26px; border-radius: 16px 16px 30px 30px; }
+#scr { display: block; width: 480px; height: 320px; border-radius: 3px; touch-action: none; }
+html, body, #stage { touch-action: none; overscroll-behavior: none; }
+.keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px 14px; margin-top: 30px; padding: 0 4px; }
+.k { position: relative; height: 34px; border-radius: 9px 9px 12px 12px; display: flex; align-items: center; justify-content: center;
+     font: 700 12px/1 "Helvetica Neue", Arial, sans-serif; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
+.k.fn { height: 22px; border-radius: 6px; font-size: 10px; }
+.k.num { font-size: 17px; }
+.k[data-s]::before { content: attr(data-s); position: absolute; top: -14px; left: -6px; right: -6px; text-align: center; font: 800 8.5px/1 "Helvetica Neue", Arial, sans-serif; letter-spacing: .3px; white-space: nowrap; }
+.k.on { transform: translateY(2px); filter: brightness(1.45); }
+.dpad { grid-column: 4 / 6; grid-row: 2 / 4; position: relative; border-radius: 50%; width: 112px; height: 112px; justify-self: center; align-self: center; }
+.dpad .k { position: absolute; width: 38px; height: 34px; font-size: 14px; }
+.dpad .u { left: 37px; top: 2px; border-radius: 14px 14px 6px 6px; }
+.dpad .d { left: 37px; bottom: 2px; border-radius: 6px 6px 14px 14px; }
+.dpad .l { left: 2px; top: 39px; border-radius: 14px 6px 6px 14px; }
+.dpad .r { right: 2px; top: 39px; border-radius: 6px 14px 14px 6px; }
+
+/* ERA 0 — PX-83: grey plastic, greenish LCD */
+body[data-era="0"] #bg { background: radial-gradient(ellipse at 50% 25%, #3b4034, #12140e 75%); }
+body[data-era="0"] #fade { background: linear-gradient(transparent, #12140e); }
+body[data-era="0"] #calc { background: linear-gradient(165deg, #61666e, #3c3f45 55%, #2b2d32); box-shadow: inset 0 2px 1px #888c93, inset 0 -6px 12px #0006, 0 30px 60px #000a; }
+body[data-era="0"] .brand { color: #ececec; }
+body[data-era="0"] .model { color: #b9bcc2; }
+body[data-era="0"] .bezel { background: linear-gradient(#26282c, #1c1d20); box-shadow: inset 0 3px 8px #000c; }
+body[data-era="0"] .k { background: linear-gradient(#55595f, #2f3136); color: #f2f2f2; box-shadow: 0 3px 0 #17181a, 0 4px 6px #0008; }
+body[data-era="0"] .k.num { background: linear-gradient(#eceef0, #b9bcc1); color: #222; }
+body[data-era="0"] .k.second { background: linear-gradient(#79bdf5, #3c86c9); color: #06243f; }
+body[data-era="0"] .k.alpha { background: linear-gradient(#8fd57c, #4f9e3f); color: #0f2a09; }
+body[data-era="0"] .k[data-s]::before { color: #8ec8ff; }
+body[data-era="0"] .k.alpha[data-s]::before { color: #9ee08b; }
+body[data-era="0"] .dpad { background: #232427; box-shadow: inset 0 2px 6px #000; }
+
+/* ERA 1 — PX-84 CE: glossy blue, colour screen */
+body[data-era="1"] #bg { background: radial-gradient(ellipse at 50% 20%, #1d3f7a, #070d1f 75%); }
+body[data-era="1"] #fade { background: linear-gradient(transparent, #070d1f); }
+body[data-era="1"] #calc { background: linear-gradient(165deg, #4d8cf0, #1f4fb0 45%, #132f72); box-shadow: inset 0 2px 1px #a8ccff, inset 0 -8px 16px #0005, 0 30px 70px #000c; }
+body[data-era="1"] .brand { color: #fff; }
+body[data-era="1"] .model { color: #cfe2ff; }
+body[data-era="1"] .bezel { background: linear-gradient(#111318, #050608); box-shadow: inset 0 1px 0 #3a3f4a, 0 1px 0 #6f9ef0; }
+body[data-era="1"] .k { background: linear-gradient(#2c2f36, #0d0e11); color: #fff; box-shadow: 0 3px 0 #000, 0 4px 8px #0009; }
+body[data-era="1"] .k.num { background: linear-gradient(#ffffff, #d6dce6); color: #142045; }
+body[data-era="1"] .k.second { background: linear-gradient(#4cc6ff, #128bd4); color: #002338; }
+body[data-era="1"] .k.alpha { background: linear-gradient(#5cf09a, #1caf55); color: #002812; }
+body[data-era="1"] .k[data-s]::before { color: #9fe3ff; }
+body[data-era="1"] .k.alpha[data-s]::before { color: #8dffbd; }
+body[data-era="1"] .dpad { background: #0b1736; box-shadow: inset 0 2px 6px #000; }
+
+/* ERA 2 — PX-9000 NEON */
+body[data-era="2"] #bg { background: linear-gradient(#12021f, #2a0636 55%, #050008); }
+body[data-era="2"] #fade { background: linear-gradient(transparent, #050008); }
+body[data-era="2"] #calc { background: linear-gradient(165deg, #121220, #07070d); border: 2px solid #29f6ff; box-shadow: 0 0 30px #29f6ff88, 0 0 90px #ff3df255, inset 0 0 30px #29f6ff22; }
+body[data-era="2"] .brand { color: #29f6ff; text-shadow: 0 0 12px #29f6ff; }
+body[data-era="2"] .model { color: #ff3df2; text-shadow: 0 0 10px #ff3df2; }
+body[data-era="2"] .bezel { background: #000; box-shadow: 0 0 0 1px #ff3df2, 0 0 24px #ff3df266; }
+body[data-era="2"] .k { background: #0a0a14; color: #8ffcff; border: 1px solid #29f6ff99; box-shadow: 0 0 10px #29f6ff44; text-shadow: 0 0 6px #29f6ff; }
+body[data-era="2"] .k.num { border-color: #ff3df2aa; color: #ffb3fa; box-shadow: 0 0 10px #ff3df244; text-shadow: 0 0 6px #ff3df2; }
+body[data-era="2"] .k.second, body[data-era="2"] .k.alpha { background: #29f6ff; color: #001; text-shadow: none; }
+body[data-era="2"] .k.alpha { background: #ff3df2; }
+body[data-era="2"] .k[data-s]::before { color: #ffe14a; text-shadow: 0 0 6px #ffe14a; }
+body[data-era="2"] .dpad { box-shadow: 0 0 0 1px #29f6ff66, 0 0 20px #29f6ff33; }
+
+/* ERA 3 — PX-∞: iridescent */
+body[data-era="3"] #bg { background: radial-gradient(ellipse at 30% 20%, #3a0a3a, transparent 50%), radial-gradient(ellipse at 75% 70%, #08304a, transparent 55%), #020106; }
+body[data-era="3"] #fade { background: linear-gradient(transparent, #020106); }
+body[data-era="3"] #calc { border: 3px solid transparent; background: linear-gradient(165deg, #140a20, #05030a) padding-box, conic-gradient(from calc(var(--h) * 1deg), #ff5fa2, #ffd24a, #7dfcff, #b28cff, #ff5fa2) border-box;
+  box-shadow: 0 0 40px hsla(calc(var(--h) * 1), 100%, 65%, .55), 0 0 120px hsla(calc(var(--h) * 1 + 120), 100%, 60%, .35); }
+body[data-era="3"] .brand { background: linear-gradient(90deg, #ff5fa2, #ffd24a, #7dfcff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+body[data-era="3"] .model { color: #ffd24a; }
+body[data-era="3"] .bezel { background: #000; box-shadow: 0 0 0 1px #fff3, 0 0 30px hsla(calc(var(--h) * 1), 100%, 65%, .5); }
+body[data-era="3"] .k { background: linear-gradient(#ffffff14, #ffffff05); color: #fff; border: 1px solid #ffffff30; text-shadow: 0 0 8px #fff8; box-shadow: inset 0 1px 0 #fff3; }
+body[data-era="3"] .k.num { border-color: #7dfcff66; }
+body[data-era="3"] .k.second { background: linear-gradient(#ff5fa2, #b0306c); }
+body[data-era="3"] .k.alpha { background: linear-gradient(#ffd24a, #b38612); color: #2a1a00; text-shadow: none; }
+body[data-era="3"] .k[data-s]::before { color: #ff9ccc; text-shadow: 0 0 6px #ff5fa2; }
+body[data-era="3"] .dpad { box-shadow: 0 0 0 1px #ffffff22, 0 0 24px hsla(calc(var(--h) * 1), 100%, 65%, .4); }
+
+#help { position: fixed; left: 12px; bottom: 10px; color: #fff8; font: 11px/1.5 Menlo, monospace; pointer-events: none; text-shadow: 0 1px 2px #000; }
+@media (max-width: 700px) { #help { display: none; } }
+#tap { display: none; position: fixed; inset: 0; z-index: 9; background: #000c; color: #fff; font: 800 28px/1 "Helvetica Neue", sans-serif; align-items: center; justify-content: center; cursor: pointer; letter-spacing: 3px; }
+
+/* ---------- trailer mode (9:16, 1080x1920) ---------- */
+#ov { display: none; }
+body.trailer #help, body.trailer #fade { display: none; }
+body.trailer #stage { inset: auto; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; }
+body.trailer #calc { left: 0; top: 0; }
+body.trailer #ov { display: block; position: absolute; inset: 0; pointer-events: none; }
+#cap { position: absolute; left: 30px; right: 30px; text-align: center; color: #fff; }
+#cap .w { display: inline-block; will-change: transform; }
+#cap.slam { top: 110px; font: 900 96px/1.08 "Helvetica Neue", Arial, sans-serif; letter-spacing: 2px; text-shadow: 0 0 30px #000, 0 6px 0 #000a; }
+#cap.slam div:nth-child(2) { color: #ffd24a; }
+#cap.type { top: 120px; font: 700 84px/1.15 Menlo, monospace; color: #c8e6a8; text-shadow: 0 0 18px #7fbf5a, 0 0 2px #fff; }
+#cap.glitch { top: 120px; font: 900 100px/1 "Helvetica Neue", Arial, sans-serif; letter-spacing: 4px; }
+#cap.card { top: 640px; font: 900 230px/0.95 "Helvetica Neue", Arial, sans-serif; letter-spacing: -4px; }
+#cap.card div:nth-child(1) .w { background: linear-gradient(180deg, #fff 30%, #ffd24a 60%, #ff5fa2); -webkit-background-clip: text; background-clip: text; color: transparent; padding: 0 10px; }
+#cap.card div:nth-child(1) .w:first-child { font-size: 360px; }
+#cap.jp { top: 70px; font: 900 190px/1 "Hiragino Mincho ProN", "Yu Mincho", serif; text-shadow: 0 0 30px #ff2a6a, 0 0 80px #ff2a6a, 0 0 4px #fff; letter-spacing: 10px; }
+#cap.jp small { display: block; font: 800 44px/1 "Helvetica Neue", Arial, sans-serif; letter-spacing: 24px; margin-top: 24px; color: #ffd24a; text-shadow: 0 0 20px #ff5f00; }
+#lower { position: absolute; left: 60px; right: 60px; bottom: 280px; }
+#lower .bar { height: 14px; background: linear-gradient(90deg, #ffd24a, #ff5fa2, #29f6ff); transform-origin: 0 50%; margin-bottom: 18px; box-shadow: 0 0 30px #ff5fa2; }
+#lower .lt { font: 900 italic 112px/1 "Helvetica Neue", Arial, sans-serif; color: #fff; letter-spacing: 1px; transform-origin: 0 100%; text-shadow: 0 0 40px #000, 6px 6px 0 #ff2a6a; white-space: nowrap; }
+#lower .ls { font: 800 32px/1.3 Menlo, monospace; color: #ffd24a; margin-top: 18px; letter-spacing: 1px; text-shadow: 0 0 16px #000, 0 2px 0 #000; min-height: 42px; }
+#wipe { position: absolute; top: -20%; left: 0; height: 140%; width: 120%; background: linear-gradient(90deg, #ff5fa2, #ffd24a 40%, #29f6ff 80%, transparent); transform: translateX(-300%); }
+#ttl .w { display: inline-block; }
+#ttl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: radial-gradient(ellipse, #000a, #000e 70%); }
+#ttl .t1 { font: 900 168px/1 "Helvetica Neue", Arial, sans-serif; letter-spacing: 6px; filter: drop-shadow(0 0 30px #ff5fa288); }
+#ttl .t1 .w { background: linear-gradient(180deg, #fff 20%, #ffd24a 55%, #ff5fa2 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+#ttl .t2 { font: 800 44px/1.3 "Helvetica Neue", Arial, sans-serif; color: #fff; letter-spacing: 10px; margin-top: 36px; }
+#ttl .t3 { font: 600 28px/1.6 Menlo, monospace; color: #7dfcff; letter-spacing: 4px; margin-top: 70px; padding: 0 80px; }
+#flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+</style>
+</head>
+<body data-era="0">
+<div id="stage">
+  <div id="bg"></div>
+  <div id="calc">
+    <div class="top"><span class="brand" id="brand">PX-83</span><span class="model" id="model">PHOENIX EDITION</span></div>
+    <div class="bezel"><canvas id="scr" width="960" height="640"></canvas></div>
+    <div class="keys" id="keys"></div>
+  </div>
+  <div id="fade"></div>
+  <div id="ov">
+    <div id="cap"></div>
+    <div id="lower"><div class="bar"></div><div class="lt"></div><div class="ls"></div></div>
+    <div id="wipe"></div>
+    <div id="ttl"><div class="t1">PHOENIX<br>∞</div><div class="t2">FROM 96×64<br>TO INFINITY</div><div class="t3">A CALCULATOR SHOOTER THAT EVOLVES<br>PLAY IT NOW</div></div>
+        <div id="flash"></div>
+  </div>
+</div>
+<div id="help">←↑→↓ move · Z fire (2ND) · X bomb (ALPHA) · C weapon (MODE) · Shift focus · Enter select · Esc back · P pause · T trailer · M mute</div>
+<div id="tap">▶ CLICK TO PLAY TRAILER</div>
+<script src="game.js"></script>
+<script src="mods.js"></script>
+<script>boot();</script>
+</body>
+</html>

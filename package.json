@@ -1,0 +1,7 @@
+{
+  "name": "phoenix-infinity",
+  "private": true,
+  "type": "module",
+  "scripts": { "trailer": "node record.mjs" },
+  "dependencies": { "puppeteer-core": "^23.0.0" }
+}
